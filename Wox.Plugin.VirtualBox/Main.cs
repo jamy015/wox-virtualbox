@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using VirtualBoxApi = VirtualBox;
 
 namespace Wox.Plugin.VirtualBox {
@@ -18,7 +19,17 @@ namespace Wox.Plugin.VirtualBox {
         /// </summary>
         /// <param name="query">Query entered by the user</param>
         /// <returns>List of results to display</returns>
-        public List<Result> Query(Query query) { }
+        public List<Result> Query(Query query) {
+            var matcher = FuzzyMatcher.Create(query.Search);
+            return (from VirtualBoxApi.IMachine machine in _vb.Machines
+                    let score = matcher.Evaluate(machine.Name).Score
+                    where score > 0
+                    select new Result() {
+                        Title = machine.Name,
+                        SubTitle = machine.State.ToString(),
+                        Score = score,
+                    }).ToList();
+        }
 
     }
 }
