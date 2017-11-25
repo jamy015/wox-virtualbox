@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
-using VirtualBox;
+using VirtualBoxApi = VirtualBox;
 
 namespace Wox.Plugin.VirtualBox {
     public class Main : IPlugin {
+        private VirtualBoxApi.IVirtualBox _vb;
 
         /// <summary>
         /// Wox plugin init method
         /// </summary>
         /// <param name="context">Wox context</param>
-        public void Init(PluginInitContext context) { }
+        public void Init(PluginInitContext context) {
+            _vb = new VirtualBoxApi.VirtualBox();
+        }
 
         /// <summary>
         /// Wox plugin query method
