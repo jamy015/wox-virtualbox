@@ -5,6 +5,7 @@ using VirtualBoxApi = VirtualBox;
 namespace Wox.Plugin.VirtualBox {
     public class Main : IPlugin {
         private VirtualBoxApi.IVirtualBox _vb;
+        private VirtualBoxApi.Session _session;
 
         /// <summary>
         /// Wox plugin init method
@@ -12,6 +13,7 @@ namespace Wox.Plugin.VirtualBox {
         /// <param name="context">Wox context</param>
         public void Init(PluginInitContext context) {
             _vb = new VirtualBoxApi.VirtualBox();
+            _session = new VirtualBoxApi.Session();
         }
 
         /// <summary>
@@ -28,6 +30,10 @@ namespace Wox.Plugin.VirtualBox {
                         Title = machine.Name,
                         SubTitle = machine.State.ToString(),
                         Score = score,
+                        Action = _ => {
+                            machine.LaunchVMProcess(_session, "gui", string.Empty);
+                            return true;
+                        }
                     }).ToList();
         }
 
