@@ -30,6 +30,7 @@ namespace Wox.Plugin.VirtualBox {
                     select new Result() {
                         Title = machine.Name,
                         SubTitle = machine.State.ToString(),
+                        IcoPath = "icon.png",
                         Score = score,
                         Action = _ => {
                             machine.LaunchVMProcess(_session, "gui", string.Empty);
