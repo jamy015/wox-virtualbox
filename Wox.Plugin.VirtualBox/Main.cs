@@ -24,6 +24,7 @@ namespace Wox.Plugin.VirtualBox {
         public List<Result> Query(Query query) {
             var matcher = FuzzyMatcher.Create(query.Search);
             return (from VirtualBoxApi.IMachine machine in _vb.Machines
+                    where machine.Accessible > 0 // if a machine is inaccessible, we cannot get its name or state
                     let score = matcher.Evaluate(machine.Name).Score
                     where score > 0
                     select new Result() {
