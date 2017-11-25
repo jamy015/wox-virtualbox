@@ -1,0 +1,11 @@
+﻿{
+	"ID": "76CCF22F445B44FE8B53261A9BABBA1E",
+	"ActionKeyword": "vbox",
+	"Name": "VirtualBox",
+	"Description": "Wox VirtualBox Plugin",
+	"Author": "Jamy Mahabier (@jamy015)",
+	"Language": "csharp",
+	"Website": "https://github.com/jamy015/",
+	"IcoPath": "icon.png",
+	"ExecuteFileName": "Wox.Plugin.VirtualBox.dll"
+}
