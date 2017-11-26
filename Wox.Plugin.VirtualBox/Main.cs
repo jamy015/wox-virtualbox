@@ -33,14 +33,22 @@ namespace Wox.Plugin.VirtualBox {
                         IcoPath = "icon.png",
                         Score = score,
                         Action = _ => {
+                            if (machine.State >= VirtualBoxApi.MachineState.MachineState_FirstOnline &&
+                                machine.State <= VirtualBoxApi.MachineState.MachineState_LastOnline) {
+                                // the machine is currently being executed
+                                return false;
+                            }
+
                             var session = new VirtualBoxApi.Session();
                             var progress = machine.LaunchVMProcess(session, "gui", string.Empty);
+
                             Task.Run(() => {
                                 progress.WaitForCompletion(10000); // 10s
                                 if (progress.ResultCode == 0) {
                                     session.UnlockMachine();
                                 }
                             });
+
                             return true;
                         }
                     }).ToList();
