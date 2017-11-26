@@ -67,6 +67,15 @@ namespace Wox.Plugin.VirtualBox {
             // substring call removes "MachineState_" from the beginning
             var pascalCased = state.ToString().Substring(13);
 
+            // handle pseudo-states (see enum MachineState in the VirtualBox SDK Reference)
+            // ReSharper disable once SwitchStatementMissingSomeCases
+            switch (pascalCased) {
+                case "FirstOnline": pascalCased = "Online"; break;
+                case "LastOnline": pascalCased = "Online"; break;
+                case "FirstTransient": pascalCased = "Transient"; break;
+                case "LastTransient": pascalCased = "Transient"; break;
+            }
+
             // insert spaces (taken from https://stackoverflow.com/a/5796427)
             return Regex.Replace(pascalCased, "(\\B[A-Z])", " $1");
         }
