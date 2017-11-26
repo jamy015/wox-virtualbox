@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using VirtualBoxApi = VirtualBox;
 
 namespace Wox.Plugin.VirtualBox {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class Main : IPlugin {
         public const string IconPath = "icon.png";
 

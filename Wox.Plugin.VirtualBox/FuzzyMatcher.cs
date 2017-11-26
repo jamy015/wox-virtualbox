@@ -1,4 +1,5 @@
 ﻿using System.Text;
+// ReSharper disable All
 
 namespace Wox.Plugin.VirtualBox {
     /// <summary>
