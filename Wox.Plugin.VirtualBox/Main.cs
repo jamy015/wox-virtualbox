@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using VirtualBoxApi = VirtualBox;
 
 namespace Wox.Plugin.VirtualBox {
@@ -29,7 +30,7 @@ namespace Wox.Plugin.VirtualBox {
                     where score > 0
                     select new Result() {
                         Title = machine.Name,
-                        SubTitle = machine.State.ToString(),
+                        SubTitle = machine.State.ToDisplayString(),
                         IcoPath = "icon.png",
                         Score = score,
                         Action = _ => {
@@ -38,6 +39,22 @@ namespace Wox.Plugin.VirtualBox {
                         }
                     }).ToList();
         }
+    }
 
+    /// <summary>
+    /// Extension methods for the VirtualBoxApi.MachineState class.
+    /// </summary>
+    internal static class MachineStateExtensions {
+        /// <summary>
+        /// Returns a pretty display string.
+        /// </summary>
+        public static string ToDisplayString(this VirtualBoxApi.MachineState state)
+        {
+            // substring call removes "MachineState_" from the beginning
+            var pascalCased = state.ToString().Substring(13);
+
+            // insert spaces (taken from https://stackoverflow.com/a/5796427)
+            return Regex.Replace(pascalCased, "(\\B[A-Z])", " $1");
+        }
     }
 }
