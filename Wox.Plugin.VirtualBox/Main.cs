@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using VirtualBoxApi = VirtualBox;
 
 namespace Wox.Plugin.VirtualBox {
@@ -32,7 +33,14 @@ namespace Wox.Plugin.VirtualBox {
                         IcoPath = "icon.png",
                         Score = score,
                         Action = _ => {
-                            machine.LaunchVMProcess(new VirtualBoxApi.Session(), "gui", string.Empty);
+                            var session = new VirtualBoxApi.Session();
+                            var progress = machine.LaunchVMProcess(session, "gui", string.Empty);
+                            Task.Run(() => {
+                                progress.WaitForCompletion(10000); // 10s
+                                if (progress.ResultCode == 0) {
+                                    session.UnlockMachine();
+                                }
+                            });
                             return true;
                         }
                     }).ToList();
