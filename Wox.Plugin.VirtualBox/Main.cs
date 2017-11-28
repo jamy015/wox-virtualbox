@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using VirtualBoxApi = VirtualBox;
 
 namespace Wox.Plugin.VirtualBox {
@@ -58,32 +56,6 @@ namespace Wox.Plugin.VirtualBox {
                 let score = matcher.Evaluate(machine.Name).Score
                 where score > 0
                 select machine.ToScoredResult(score)).ToList();
-        }
-
-        /// <summary>
-        /// Returns a Wox action that launches the given VM.
-        /// </summary>
-        /// <param name="machine">VM to launch when the returned action is invoked</param>
-        internal static Func<ActionContext, bool> CreateLaunchVmAction(VirtualBoxApi.IMachine machine) {
-            return context => {
-                if (machine.State >= VirtualBoxApi.MachineState.MachineState_FirstOnline &&
-                    machine.State <= VirtualBoxApi.MachineState.MachineState_LastOnline) {
-                    // the machine is currently being executed
-                    return false;
-                }
-
-                var session = new VirtualBoxApi.Session();
-                var progress = machine.LaunchVMProcess(session, "gui", string.Empty);
-
-                Task.Run(() => {
-                    progress.WaitForCompletion(10000); // 10s
-                    if (progress.ResultCode == 0) {
-                        session.UnlockMachine();
-                    }
-                });
-
-                return true;
-            };
         }
     }
 }

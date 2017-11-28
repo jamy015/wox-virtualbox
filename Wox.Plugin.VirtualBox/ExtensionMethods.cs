@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using VirtualBoxApi = VirtualBox;
 
 namespace Wox.Plugin.VirtualBox {
@@ -34,6 +35,20 @@ namespace Wox.Plugin.VirtualBox {
     /// </summary>
     internal static class MachineExtensions {
         /// <summary>
+        /// Returns true if this machine is online, false otherwise.
+        /// 
+        /// At some point, C# will hopefully start supporting extension properties (see
+        /// https://github.com/dotnet/csharplang/issues/192). At that point, it would probably
+        /// make sense to turn this method into a property.
+        /// </summary>
+        /// <returns></returns>
+        // ReSharper disable once MemberCanBePrivate.Global
+        public static bool Online(this VirtualBoxApi.IMachine machine) {
+            return machine.State >= VirtualBoxApi.MachineState.MachineState_FirstOnline &&
+                   machine.State <= VirtualBoxApi.MachineState.MachineState_LastOnline;
+        }
+
+        /// <summary>
         /// Returns a Wox.Plugin.Result object corresponding to this machine.
         /// </summary>
         /// <param name="machine">The machine to resultify</param>
@@ -42,8 +57,31 @@ namespace Wox.Plugin.VirtualBox {
                 Title = machine.Name,
                 SubTitle = machine.State.ToDisplayString(),
                 IcoPath = Main.IconPath,
-                Action = Main.CreateLaunchVmAction(machine)
-            };
+                Action = context => {
+                    // the machine cannot be launched if it's already online
+                    if (machine.Online()) {
+                        return false;
+                    }
+
+                    var session = new VirtualBoxApi.Session();
+                    var progress = machine.LaunchVMProcess(session, "gui", string.Empty);
+
+                    /*
+                     * Although everything appears to work fine if we don't unlock the machine after launching,
+                     * the VirtualBox SDK reference (http://download.virtualbox.org/virtualbox/SDKRef.pdf) says
+                     * that we must unlock it (see the documentation of IMachine::launchVMProcess()). We do this
+                     * asynchronously to keep the Wox UI responsive.
+                     */
+                    Task.Run(() => {
+                        progress.WaitForCompletion(10000); // 10s
+                        if (progress.ResultCode == 0) {
+                            session.UnlockMachine();
+                        }
+                    });
+
+                    return true;
+                }
+        };
         }
 
         /// <summary>
