@@ -2,10 +2,10 @@
 	"ID": "76CCF22F445B44FE8B53261A9BABBA1E",
 	"ActionKeyword": "vbox",
 	"Name": "VirtualBox",
-	"Description": "Wox VirtualBox Plugin",
+	"Description": "Search in and launch your VirtualBox VMs",
 	"Author": "Jamy Mahabier (@jamy015)",
 	"Language": "csharp",
-	"Website": "https://github.com/jamy015/",
+	"Website": "https://github.com/jamy015/wox-virtualbox",
 	"IcoPath": "icon.png",
 	"ExecuteFileName": "Wox.Plugin.VirtualBox.dll"
 }
