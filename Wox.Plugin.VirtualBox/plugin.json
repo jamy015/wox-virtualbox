@@ -4,6 +4,7 @@
 	"Name": "VirtualBox",
 	"Description": "Search in and launch your VirtualBox VMs",
 	"Author": "Jamy Mahabier (@jamy015)",
+	"Version": "1.0.0",
 	"Language": "csharp",
 	"Website": "https://github.com/jamy015/wox-virtualbox",
 	"IcoPath": "icon.png",
